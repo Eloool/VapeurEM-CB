@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "serveur": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -11,6 +12,7 @@
   "dependencies": {
     "@prisma/client": "^6.0.0",
     "express": "^4.21.1",
+    "handlebars": "^4.7.8",
     "prisma": "^6.0.0",
     "sqlite3": "^5.1.7"
   }
