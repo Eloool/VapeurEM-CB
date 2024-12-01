@@ -9,6 +9,29 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
+}
+
+model Games {
+  id           Int      @id @default(autoincrement())
+  title        String
+  description  String
+  releaseDate  DateTime @default(now())
+  editor       Editors? @relation(fields: [editorId], references: [id])
+  editorId     Int?
+  genre        Genres   @relation(fields: [genreId], references: [id])
+  genreId      Int
+}
+
+model Editors {
+  id   Int    @id @default(autoincrement())
+  name String
+  games Games[]
+}
+
+model Genres {
+  id    Int    @id @default(autoincrement())
+  name  String
+  games Games[]
 }
