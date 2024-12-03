@@ -17,6 +17,28 @@ hbs.registerPartials(path.join(__dirname, "WebPages", "partials")); // On défin
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const gamesGenres = ["Action","Aventure","RPG","Simulation","Sport","MMORPG"];
+(async () => {
+    try {
+        // Récupérer tous les genres existants dans la base de données
+        const genres = await prisma.genres.findMany();
+        const existingGenreNames = genres.map((genre) => genre.name);
+
+        // Parcourir les genres définis et ajouter les nouveaux
+        for (const element of gamesGenres) {
+            if (!existingGenreNames.includes(element)) {
+                await prisma.genres.create({
+                    data: {
+                        name: element, 
+                    },
+                });
+                console.log(`Genre ajouté : ${element}`);
+            }
+        }
+        console.log("Tous les genres sont bien dans la base de données.");
+    } catch (error) {
+        console.error("Erreur lors de l'ajout des genres :", error);
+    } 
+})();
 
 app.get("/", async (req, res) => {
     res.render("index");
