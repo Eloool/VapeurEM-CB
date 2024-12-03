@@ -1,0 +1,14 @@
+<form method="post">
+    <label for="editor">Donner un nom:</label>
+    <input type="text" id="editor" name="editor" required/>
+     <button type="submit">Ajouter un editeur</button>
+</form>
+<h1>Liste des éditors</h1>
+
+<ul>
+    {{#each editor}}
+        <li>
+            <p>{{name}}</p>
+        </li>
+    {{/each}}
+</ul>
