@@ -29,6 +29,25 @@ app.get("/games", async (req, res) => {
     });
 });
 
+app.get("/editor", async (req, res) => {
+    const editor = await prisma.Editors.findMany();
+    res.render("editor", {editor});
+});
+
+app.post("/editor", async (req, res, next) => {
+    const  { editor } = req.body;
+console.log(req.body)
+    try {
+        await prisma.Editors.create({
+            data : { name:editor  }, 
+        }); // Ici on ne stock pas le retour de la requête, mais on attend quand même son exécution
+        res.status(201).redirect("/editor"); // On redirige vers la page des tâches
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ error: "Task creation failed" });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
