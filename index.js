@@ -46,8 +46,10 @@ app.get("/", async (req, res) => {
 
 app.get("/games", async (req, res) => {
     const games = await prisma.games.findMany();
+    const editors = await prisma.Editors.findMany();
+    const genres = await prisma.genres.findMany();
     res.render("games", {
-        games,
+        games,editors,genres
     });
 });
 
@@ -69,6 +71,35 @@ console.log(req.body)
         res.status(400).json({ error: "Task creation failed" });
     }
 });
+
+app.post("/editor/delete", async (req, res, next) => {
+    const { id } = req.body;
+    try {
+        await prisma.Editors.delete({
+            where: { id: parseInt(id, 10) },
+        });
+        res.redirect("/editor"); 
+    } catch (error) {
+        console.error("Erreur lors de la suppression de l'éditeur :", error);
+        res.status(400).json({ error: "Échec de la suppression de l'éditeur" });
+    }
+});
+
+app.post("/editor/update", async (req, res, next) => {
+    const { id, name } = req.body;
+
+    try {
+        await prisma.Editors.update({
+            where: { id: parseInt(id, 10) },
+            data: { name },
+        });
+        res.redirect("/editor");
+    } catch (error) {
+        console.error("Erreur lors de la modification de l'éditeur :", error);
+        res.status(400).json({ error: "Échec de la modification de l'éditeur" });
+    }
+});
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
