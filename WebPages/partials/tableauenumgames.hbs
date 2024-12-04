@@ -1,0 +1,25 @@
+{{#if games.length}}
+<table>
+  <caption>
+    Tous les jeux qui sont des
+  </caption>
+  <thead>
+    <tr>
+      <th scope="col">Nom du jeu</th>
+      <th scope="col">Description</th>
+      <th scope="col">Editor</th>
+      <th scope="col">Genre</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+    {{#each games}}
+    <tr>
+      <th scope="row">{{title}}</th>
+      <td>{{description}}</td>
+      <td>{{releaseDate}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+{{/if}}

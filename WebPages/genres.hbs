@@ -1,0 +1,10 @@
+<h1>Liste des éditeurs</h1>
+<a href="/games">Tous les jeux</a>
+<ul>
+    {{#each genres}}
+        <li>
+            <a href="/genres?id={{id}}">{{name}}</a>
+        </li>
+    {{/each}}
+</ul>
+{{>tableauenumgames games=gamesWithGenre}}

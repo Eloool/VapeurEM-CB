@@ -8,7 +8,7 @@
 <ul>
     {{#each editor}}
         <li>
-            <p>{{name}}</p>
+            <a href="/editor?id={{id}}">{{name}}</a>
             
             <form method="post" action="/editor/update" style="display: inline;">
                 <input type="hidden" name="id" value="{{id}}" />
@@ -23,3 +23,28 @@
         </li>
     {{/each}}
 </ul>
+{{#if gamesFromEditor.length}}
+<table>
+  <caption>
+    Tous les jeux de
+  </caption>
+  <thead>
+    <tr>
+      <th scope="col">Nom du jeu</th>
+      <th scope="col">Description</th>
+      <th scope="col">Editor</th>
+      <th scope="col">Genre</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+    {{#each gamesFromEditor}}
+    <tr>
+      <th scope="row">{{title}}</th>
+      <td>{{description}}</td>
+      <td>{{releaseDate}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+{{/if}}
