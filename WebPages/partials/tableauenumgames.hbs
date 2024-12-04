@@ -1,0 +1,29 @@
+{{#if games.length}}
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Nom du jeu</th>
+      <th scope="col">Description</th>
+      <th scope="col">Date de sortie</th>
+      <th scope="col">Editor</th>
+      <th scope="col">Genre</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each games}}
+    <tr>
+      <th scope="row">{{title}}</th>
+      <td>{{description}}</td>
+      <td>{{releaseDate}}</td>
+      <td><a href="/editor?id={{editor.id}}">{{editor.name}}</a></td>
+      <td><a href="/genres?id={{genre.id}}">{{genre.name}}</a></td>
+      <td><form method="post" action="/games/delete">
+            <input type="hidden" name="id" value="{{id}}" />
+            <button type="submit">Supprimer</button>
+        </form></td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+{{/if}}

@@ -1,0 +1,9 @@
+<h1>Liste des genres de jeux</h1>
+<ul>
+    {{#each genres}}
+        <li>
+            <a href="/genres?id={{id}}">{{name}}</a>
+        </li>
+    {{/each}}
+</ul>
+{{>tableauenumgames games=gamesWithGenre}}

@@ -17,6 +17,13 @@ hbs.registerPartials(path.join(__dirname, "WebPages", "partials")); // On défin
 // Cela permet de récupérer les données envoyées via des formulaires et les rendre disponibles dans req.body.
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Middleware pour gérer les erreurs 404
+// app.use((req, res) => {
+//     res.status(404).render("404");
+// });
+
+
+
 const gamesGenres = ["Action","Aventure","RPG","Simulation","Sport","MMORPG"];
 (async () => {
     try {
@@ -46,26 +53,57 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/games", async (req, res) => {
-    const games = await prisma.games.findMany();
-    const editors = await prisma.Editors.findMany();
-    const genres = await prisma.genres.findMany();
+    const games = await prisma.games.findMany({
+        include: {
+            editor: true,
+            genre: true,
+        },
+            orderBy: {
+                title: "asc",
+            },
+        });
     res.render("games", {
-        games,editors,genres
+        games,
     });
 });
 
 app.get("/editor", async (req, res) => {
-    const editor = await prisma.Editors.findMany();
-    res.render("editor", {editor});
+    const { id } = req.query;
+    try {
+        const editor = await prisma.Editors.findMany({
+            orderBy: {
+                name: "asc",
+            },
+        });
+
+        let games = null;
+        if (id) {
+            games = await prisma.Games.findMany({
+                where: { editorId: parseInt(id, 10) },
+                include: {
+                    editor: true,
+                    genre: true,
+                },
+                orderBy: {
+                    title: "asc",
+                },
+            });
+        }
+
+        res.render("editor", { editor, games });
+    } catch (error) {
+        console.error("Erreur lors de la récupération des éditeurs :", error);
+        res.status(500).json({ error: "Erreur serveur" });
+    }
 });
 
 app.post("/editor", async (req, res, next) => {
     const  { editor } = req.body;
     try {
         await prisma.Editors.create({
-            data : { name:editor  }, 
-        }); // Ici on ne stock pas le retour de la requête, mais on attend quand même son exécution
-        res.status(201).redirect("/editor"); // On redirige vers la page des tâches
+            data : { name:editor }, 
+        }); 
+        res.status(201).redirect("/editor");
     } catch (error) {
         console.error(error);
         res.status(400).json({ error: "Task creation failed" });
@@ -107,7 +145,6 @@ app.post("/editor/delete", async (req, res, next) => {
 
 app.post("/editor/update", async (req, res, next) => {
     const { id, name } = req.body;
-
     try {
         await prisma.Editors.update({
             where: { id: parseInt(id, 10) },
@@ -120,6 +157,47 @@ app.post("/editor/update", async (req, res, next) => {
     }
 });
 
+app.get("/genres", async (req, res) => {
+    const { id } = req.query;
+    try {
+        const genres = await prisma.Genres.findMany({
+            orderBy: {
+                name: "asc",
+            },
+        });
+
+        let gamesWithGenre = null;
+        if (id) {
+            gamesWithGenre = await prisma.Games.findMany({
+                where: { genreId: parseInt(id, 10) },
+                include: {
+                    editor: true,
+                    genre: true,
+                },
+                orderBy: {
+                    title: "asc",
+                },
+            });
+        }
+        res.render("genres", { genres, gamesWithGenre });
+    } catch (error) {
+        console.error("Erreur lors de la récupération des éditeurs :", error);
+        res.status(500).json({ error: "Erreur serveur" });
+    }
+});
+
+app.post("/games/delete", async (req, res, next) => {
+    const { id } = req.body;
+    try {
+        await prisma.Games.delete({
+            where: { id: parseInt(id, 10) },
+        });
+        res.redirect("/games"); 
+    } catch (error) {
+        console.error("Erreur lors de la suppression du jeu :", error);
+        res.status(400).json({ error: "Échec de la suppression de l'éditeur" });
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

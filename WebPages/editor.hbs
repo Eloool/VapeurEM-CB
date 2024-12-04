@@ -8,7 +8,7 @@
 <ul>
     {{#each editor}}
         <li>
-            <p>{{name}}</p>
+            <a href="/editor?id={{id}}">{{name}}</a>
             
             <form method="post" action="/editor/update" style="display: inline;">
                 <input type="hidden" name="id" value="{{id}}" />
@@ -23,3 +23,4 @@
         </li>
     {{/each}}
 </ul>
+{{>tableauenumgames games=games}}
