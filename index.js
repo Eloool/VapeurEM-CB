@@ -54,34 +54,43 @@ app.get("/", async (req, res) => {
 
 app.get("/games", async (req, res) => {
     const games = await prisma.games.findMany({
+        include: {
+            editor: true,
+            genre: true,
+        },
             orderBy: {
                 title: "asc",
             },
         });
-    const editors = await prisma.Editors.findMany();
-    const genres = await prisma.genres.findMany();
     res.render("games", {
-        games,editors,genres
+        games,
     });
 });
 
 app.get("/editor", async (req, res) => {
-    const { id } = req.query; // Récupère l'ID de la requête (si présent)
+    const { id } = req.query;
     try {
         const editor = await prisma.Editors.findMany({
             orderBy: {
-                name: "asc", // Trie par nom en ordre croissant
+                name: "asc",
             },
         });
 
-        let gamesFromEditor = null;
+        let games = null;
         if (id) {
-            gamesFromEditor = await prisma.Editors.findUnique({
-                where: { id: parseInt(id, 10) },
+            games = await prisma.Games.findMany({
+                where: { editorId: parseInt(id, 10) },
+                include: {
+                    editor: true,
+                    genre: true,
+                },
+                orderBy: {
+                    title: "asc",
+                },
             });
         }
 
-        res.render("editor", { editor, gamesFromEditor });
+        res.render("editor", { editor, games });
     } catch (error) {
         console.error("Erreur lors de la récupération des éditeurs :", error);
         res.status(500).json({ error: "Erreur serveur" });
@@ -149,25 +158,44 @@ app.post("/editor/update", async (req, res, next) => {
 });
 
 app.get("/genres", async (req, res) => {
-    const { id } = req.query; // Récupère l'ID de la requête (si présent)
+    const { id } = req.query;
     try {
         const genres = await prisma.Genres.findMany({
             orderBy: {
-                name: "asc", // Trie par nom en ordre croissant
+                name: "asc",
             },
         });
 
         let gamesWithGenre = null;
         if (id) {
-            gamesWithGenre = await prisma.Genres.findUnique({
-                where: { id: parseInt(id, 10) },
+            gamesWithGenre = await prisma.Games.findMany({
+                where: { genreId: parseInt(id, 10) },
+                include: {
+                    editor: true,
+                    genre: true,
+                },
+                orderBy: {
+                    title: "asc",
+                },
             });
         }
-
         res.render("genres", { genres, gamesWithGenre });
     } catch (error) {
         console.error("Erreur lors de la récupération des éditeurs :", error);
         res.status(500).json({ error: "Erreur serveur" });
+    }
+});
+
+app.post("/games/delete", async (req, res, next) => {
+    const { id } = req.body;
+    try {
+        await prisma.Games.delete({
+            where: { id: parseInt(id, 10) },
+        });
+        res.redirect("/games"); 
+    } catch (error) {
+        console.error("Erreur lors de la suppression du jeu :", error);
+        res.status(400).json({ error: "Échec de la suppression de l'éditeur" });
     }
 });
 

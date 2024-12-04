@@ -20,8 +20,8 @@ model Games {
   releaseDate  String
   editor       Editors? @relation(fields: [editorId], references: [id])
   editorId     Int?
-  genre        Genres   @relation(fields: [genreId], references: [id])
-  genreId      Int
+  genre        Genres?   @relation(fields: [genreId], references: [id])
+  genreId      Int?
 }
 
 model Editors {
