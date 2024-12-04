@@ -17,7 +17,7 @@ model Games {
   id           Int      @id @default(autoincrement())
   title        String
   description  String
-  releaseDate  DateTime @default(now())
+  releaseDate  String
   editor       Editors? @relation(fields: [editorId], references: [id])
   editorId     Int?
   genre        Genres   @relation(fields: [genreId], references: [id])
