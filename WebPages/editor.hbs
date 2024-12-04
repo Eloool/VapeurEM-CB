@@ -3,12 +3,23 @@
     <input type="text" id="editor" name="editor" required/>
      <button type="submit">Ajouter un editeur</button>
 </form>
-<h1>Liste des éditors</h1>
+<h1>Liste des éditeurs</h1>
 
 <ul>
     {{#each editor}}
         <li>
             <p>{{name}}</p>
+            
+            <form method="post" action="/editor/update" style="display: inline;">
+                <input type="hidden" name="id" value="{{id}}" />
+                <input type="text" name="name" value="{{name}}" required />
+                <button type="submit">Modifier</button>
+            </form>
+
+            <form method="post" action="/editor/delete">
+                <input type="hidden" name="id" value="{{id}}" />
+                <button type="submit">Supprimer</button>
+            </form>
         </li>
     {{/each}}
 </ul>
