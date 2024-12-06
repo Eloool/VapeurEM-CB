@@ -13,7 +13,7 @@
   <tbody>
     {{#each games}}
     <tr>
-      <th scope="row">{{title}}</th>
+      <th scope="row"><a href="/game?id={{id}}">{{title}}</a></th>
       <td>{{description}}</td>
       <td>{{releaseDate}}</td>
       <td><a href="/editor?id={{editor.id}}">{{editor.name}}</a></td>
