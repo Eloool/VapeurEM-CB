@@ -62,8 +62,10 @@ app.get("/games", async (req, res) => {
                 title: "asc",
             },
         });
+    const editor = await prisma.Editors.findMany();
+    const genre = await prisma.Genres.findMany();
     res.render("games", {
-        games,
+        games,editor,genre
     });
 });
 
@@ -110,20 +112,20 @@ app.post("/editor", async (req, res, next) => {
     }
 });
 
-app.get("/game", async (req, res) => {
-    const games = await prisma.Games.findMany();
-    const editor = await prisma.Editors.findMany();
-    const genre = await prisma.Genres.findMany();
-    res.render("add_jeux", {games, editor, genre} );
-});
+// app.get("/game", async (req, res) => {
+//     const games = await prisma.Games.findMany();
+//     const editor = await prisma.Editors.findMany();
+//     const genre = await prisma.Genres.findMany();
+//     res.render("add_jeux", {games, editor, genre} );
+// });
 
-app.post("/game", async (req, res, next) => {
+app.post("/addgame", async (req, res, next) => {
     const  { jeux, description, date, editor, genre} = req.body;
     try {
         await prisma.Games.create({
             data : { title: jeux, description: description, releaseDate: date , genreId: parseInt(genre), editorId: parseInt(editor)}, 
         }); // Ici on ne stock pas le retour de la requête, mais on attend quand même son exécution
-        res.status(201).redirect("/game"); // On redirige vers la page des tâches
+        res.status(201).redirect("/games"); // On redirige vers la page des tâches
     } catch (error) {
         console.error(error);
         res.status(400).json({ error: "Task creation failed" });
