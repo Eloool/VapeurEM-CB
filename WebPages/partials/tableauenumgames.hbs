@@ -2,6 +2,7 @@
 <table>
   <thead>
     <tr>
+      <th scope="col">Favori</th>
       <th scope="col">Nom du jeu</th>
       <th scope="col">Description</th>
       <th scope="col">Date de sortie</th>
@@ -13,12 +14,27 @@
   <tbody>
     {{#each games}}
     <tr>
-      <th scope="row"><a href="/game?id={{id}}">{{title}}</a></th>
+      <th scope="row">
+        <form method="post" action="/favorited">
+          <input type="hidden" name="id" value="{{id}}" />
+          <input type="hidden" name="favorited" value="false" />
+          <input 
+          type="checkbox" 
+          name="favorited" 
+          value="true" 
+          {{#if favorited}}checked{{/if}} 
+          onchange="this.form.favorited.value = this.checked ? 'true' : 'false'; this.form.submit();" 
+          />
+        </form>
+
+      </th>
+      <td><a href="/game?id={{id}}">{{title}}</a></td>
       <td>{{description}}</td>
       <td>{{releaseDate}}</td>
       <td><a href="/editor?id={{editor.id}}">{{editor.name}}</a></td>
       <td><a href="/genres?id={{genre.id}}">{{genre.name}}</a></td>
-      <td><form method="post" action="/games/delete">
+      <td>
+        <form method="post" action="/games/delete">
             <input type="hidden" name="id" value="{{id}}" />
             <button type="submit">Supprimer</button>
         </form></td>

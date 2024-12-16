@@ -12,7 +12,7 @@ const PORT = 3008;
 app.set("view engine", "hbs"); // On définit le moteur de template que Express va utiliser
 app.set("views", path.join(__dirname, "WebPages")); // On définit le dossier des vues (dans lequel se trouvent les fichiers .hbs)
 hbs.registerPartials(path.join(__dirname, "WebPages", "partials")); // On définit le dossier des partials (composants e.g. header, footer, menu...)
-
+app.use(express.static('public'));
 // On définit un middleware pour parser les données des requêtes entrantes.
 // Cela permet de récupérer les données envoyées via des formulaires et les rendre disponibles dans req.body.
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -49,8 +49,26 @@ const gamesGenres = ["Action","Aventure","RPG","Simulation","Sport","MMORPG"];
 })();
 
 app.get("/", async (req, res) => {
-    res.render("index");
+    try {
+        const games = await prisma.games.findMany({
+            include: {
+                editor: true,
+                genre: true,
+            },
+            where: {
+                favorited: true,
+            },
+            orderBy: {
+                title: "asc",
+            },
+        });
+        res.render("index", { games });
+    } catch (error) {
+        console.error("Erreur lors de la récupération des jeux favoris :", error);
+        res.status(500).send("Erreur serveur");
+    }
 });
+
 
 app.get("/games", async (req, res) => {
     const games = await prisma.games.findMany({
@@ -112,12 +130,6 @@ app.post("/editor", async (req, res, next) => {
     }
 });
 
-// app.get("/game", async (req, res) => {
-//     const games = await prisma.Games.findMany();
-//     const editor = await prisma.Editors.findMany();
-//     const genre = await prisma.Genres.findMany();
-//     res.render("add_jeux", {games, editor, genre} );
-// });
 
 app.post("/addgame", async (req, res, next) => {
     const  { jeux, description, date, editor, genre} = req.body;
@@ -200,6 +212,24 @@ app.post("/games/delete", async (req, res, next) => {
         res.status(400).json({ error: "Échec de la suppression de l'éditeur" });
     }
 });
+
+app.post("/favorited", async (req, res, next) => {
+    const { id, favorited } = req.body;
+    try {
+        const favoritedbool = favorited[1] === 'true';
+        await prisma.Games.update({
+            where: { id: parseInt(id, 10) },
+            data: { favorited: favoritedbool },
+        });
+        res.redirect(req.headers.referer || '/');
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour du favori :", error);
+        res.status(500).send("Erreur serveur");
+    }
+});
+
+
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

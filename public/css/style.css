@@ -1,0 +1,188 @@
+/* CSS général */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+header button {
+    background-color: #444;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border-radius: 5px;
+}
+
+header button:hover {
+    background-color: #555;
+}
+
+form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 300px;
+}
+
+form label {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+form input[type="text"],
+form input[type="date"],
+form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+form button {
+    background-color: #666; /* Gris foncé */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+form button:hover {
+    background-color: #555; /* Gris plus foncé sur hover */
+}
+
+h1 {
+    text-align: center;
+    margin: 20px 0;
+    color: #333;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+ul li {
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+ul li a {
+    text-decoration: none;
+    color: #007bff; /* Bleu pour les liens */
+}
+
+ul li a:hover {
+    text-decoration: underline;
+}
+
+form[type="checkbox"] input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+}
+
+form button {
+    background-color: #dc3545; /* Rouge pour suppression */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 12px; /* Petit texte */
+}
+
+form button:hover {
+    background-color: #c82333; /* Rouge foncé sur hover */
+}
+
+/* Styles pour les tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+table th,
+table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    background-color: white;
+}
+table td form{
+    margin :0;
+    width: 10%;
+}
+
+table th {
+    background-color: #444;
+    color: white;
+    font-weight: bold;
+}
+
+table th:hover {
+    background-color: #555;
+}
+
+table td a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+table td a:hover {
+    text-decoration: underline;
+}
+
+table td form {
+    margin: 0;
+    height: 50%;
+    width: 50%;
+}
+
+table td button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 3px 8px; /* Bouton plus petit */
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 12px; /* Petit texte */
+}
+
+table td button:hover {
+    background-color: #c82333;
+}
