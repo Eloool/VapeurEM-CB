@@ -22,6 +22,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //     res.status(404).render("404");
 // });
 
+hbs.registerHelper("ifEqual", function (a, b, options) {
+    return a == b ? options.fn(this) : options.inverse(this);
+});
 
 
 const gamesGenres = ["Action","Aventure","RPG","Simulation","Sport","MMORPG"];
@@ -230,6 +233,46 @@ app.post("/favorited", async (req, res, next) => {
 
 
 
+app.get("/game", async (req, res) => {
+    const { id } = req.query;
+    try {
+        if (!id || isNaN(parseInt(id, 10))) {
+            return res.status(400).json({ error: "ID invalide ou manquant" });
+        }
+
+        const game = await prisma.games.findUnique({
+            where: { id: parseInt(id, 10) },
+            include: {
+                editor: true,
+                genre: true,
+            },
+        });
+
+        if (!game) {
+            return res.status(404).send("Jeu introuvable");
+        }
+        const editor = await prisma.Editors.findMany();
+        const genre = await prisma.Genres.findMany();
+        res.render("infogame", { game, editor, genre});
+    } catch (error) {
+        console.error("Erreur lors de la récupération du jeu :", error);
+        res.status(500).json({ error: "Erreur interne du serveur" });
+    }
+});
+
+app.post("/infogames", async (req, res, next) => {
+    const { id, jeux, description, date, editor, genre} = req.body;
+    try {
+        await prisma.Games.update({
+            where: { id: parseInt(id, 10) },
+            data : { title: jeux, description: description, releaseDate: date , genreId: parseInt(genre), editorId: parseInt(editor)},
+        });
+        res.redirect(req.headers.referer || '/');
+    } catch (error) {
+        console.error("Erreur lors de la modification de l'éditeur :", error);
+        res.status(400).json({ error: "Échec de la modification de l'éditeur" });
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
