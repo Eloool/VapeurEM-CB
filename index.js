@@ -17,16 +17,12 @@ app.use(express.static('public'));
 // Cela permet de récupérer les données envoyées via des formulaires et les rendre disponibles dans req.body.
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Middleware pour gérer les erreurs 404
-// app.use((req, res) => {
-//     res.status(404).render("404");
-// });
-
+//Helper pour savoir si deux nombres sont égaux
 hbs.registerHelper("ifEqual", function (a, b, options) {
     return a == b ? options.fn(this) : options.inverse(this);
 });
 
-
+// Ajout des genres qu'y n'existent pas dans la base de données 
 const gamesGenres = ["Action","Aventure","RPG","Simulation","Sport","MMORPG"];
 (async () => {
     try {
@@ -51,6 +47,7 @@ const gamesGenres = ["Action","Aventure","RPG","Simulation","Sport","MMORPG"];
     } 
 })();
 
+//Affichage des jeux en favori
 app.get("/", async (req, res) => {
     try {
         const games = await prisma.games.findMany({
@@ -72,7 +69,7 @@ app.get("/", async (req, res) => {
     }
 });
 
-
+//Affichage de tous les jeux
 app.get("/games", async (req, res) => {
     const games = await prisma.games.findMany({
         include: {
@@ -90,6 +87,94 @@ app.get("/games", async (req, res) => {
     });
 });
 
+//Ajout d'un jeu
+app.post("/addgame", async (req, res, next) => {
+    const  { jeux, description, date, editor, genre} = req.body;
+    try {
+        await prisma.Games.create({
+            data : { title: jeux, description: description, releaseDate: date , genreId: parseInt(genre), editorId: parseInt(editor)}, 
+        }); // Ici on ne stock pas le retour de la requête, mais on attend quand même son exécution
+        res.status(201).redirect("/games"); // On redirige vers la page des tâches
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ error: "Task creation failed" });
+    }
+});
+
+//Suppression d'un jeu
+app.post("/games/delete", async (req, res, next) => {
+    const { id } = req.body;
+    try {
+        await prisma.Games.delete({
+            where: { id: parseInt(id, 10) },
+        });
+        res.redirect("/games"); 
+    } catch (error) {
+        console.error("Erreur lors de la suppression du jeu :", error);
+        res.status(400).json({ error: "Échec de la suppression de l'éditeur" });
+    }
+});
+
+//Affichage d'un jeu en particulier
+app.get("/game", async (req, res) => {
+    const { id } = req.query;
+    try {
+        if (!id || isNaN(parseInt(id, 10))) {
+            return res.status(400).json({ error: "ID invalide ou manquant" });
+        }
+
+        const game = await prisma.games.findUnique({
+            where: { id: parseInt(id, 10) },
+            include: {
+                editor: true,
+                genre: true,
+            },
+        });
+
+        if (!game) {
+            return res.status(404).send("Jeu introuvable");
+        }
+        const editor = await prisma.Editors.findMany();
+        const genre = await prisma.Genres.findMany();
+        res.render("infogame", { game, editor, genre});
+    } catch (error) {
+        console.error("Erreur lors de la récupération du jeu :", error);
+        res.status(500).json({ error: "Erreur interne du serveur" });
+    }
+});
+
+//Changement des infos d'un jeu
+app.post("/games/update", async (req, res, next) => {
+    const { id, jeux, description, date, editor, genre} = req.body;
+    try {
+        await prisma.Games.update({
+            where: { id: parseInt(id, 10) },
+            data : { title: jeux, description: description, releaseDate: date , genreId: parseInt(genre), editorId: parseInt(editor)},
+        });
+        res.redirect(req.headers.referer || '/');
+    } catch (error) {
+        console.error("Erreur lors de la modification de l'éditeur :", error);
+        res.status(400).json({ error: "Échec de la modification de l'éditeur" });
+    }
+});
+
+//Change l'etat favorited quand l'appui sur une checkbox
+app.post("/favorited", async (req, res, next) => {
+    const { id, favorited } = req.body;
+    try {
+        const favoritedbool = favorited[1] === 'true';
+        await prisma.Games.update({
+            where: { id: parseInt(id, 10) },
+            data: { favorited: favoritedbool },
+        });
+        res.redirect(req.headers.referer || '/');
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour du favori :", error);
+        res.status(500).send("Erreur serveur");
+    }
+});
+
+//Affochage de tous les editors avec leurs jeux
 app.get("/editor", async (req, res) => {
     const { id } = req.query;
     try {
@@ -120,6 +205,7 @@ app.get("/editor", async (req, res) => {
     }
 });
 
+//Ajout d'un editor
 app.post("/editor", async (req, res, next) => {
     const  { editor } = req.body;
     try {
@@ -133,20 +219,7 @@ app.post("/editor", async (req, res, next) => {
     }
 });
 
-
-app.post("/addgame", async (req, res, next) => {
-    const  { jeux, description, date, editor, genre} = req.body;
-    try {
-        await prisma.Games.create({
-            data : { title: jeux, description: description, releaseDate: date , genreId: parseInt(genre), editorId: parseInt(editor)}, 
-        }); // Ici on ne stock pas le retour de la requête, mais on attend quand même son exécution
-        res.status(201).redirect("/games"); // On redirige vers la page des tâches
-    } catch (error) {
-        console.error(error);
-        res.status(400).json({ error: "Task creation failed" });
-    }
-});
-
+//Suppression d'un editor
 app.post("/editor/delete", async (req, res, next) => {
     const { id } = req.body;
     try {
@@ -160,6 +233,7 @@ app.post("/editor/delete", async (req, res, next) => {
     }
 });
 
+//Update d'un editor
 app.post("/editor/update", async (req, res, next) => {
     const { id, name } = req.body;
     try {
@@ -174,6 +248,7 @@ app.post("/editor/update", async (req, res, next) => {
     }
 });
 
+//Affichage de tous les genres et des jeux du genre sélectionné
 app.get("/genres", async (req, res) => {
     const { id } = req.query;
     try {
@@ -203,77 +278,11 @@ app.get("/genres", async (req, res) => {
     }
 });
 
-app.post("/games/delete", async (req, res, next) => {
-    const { id } = req.body;
-    try {
-        await prisma.Games.delete({
-            where: { id: parseInt(id, 10) },
-        });
-        res.redirect("/games"); 
-    } catch (error) {
-        console.error("Erreur lors de la suppression du jeu :", error);
-        res.status(400).json({ error: "Échec de la suppression de l'éditeur" });
-    }
-});
-
-app.post("/favorited", async (req, res, next) => {
-    const { id, favorited } = req.body;
-    try {
-        const favoritedbool = favorited[1] === 'true';
-        await prisma.Games.update({
-            where: { id: parseInt(id, 10) },
-            data: { favorited: favoritedbool },
-        });
-        res.redirect(req.headers.referer || '/');
-    } catch (error) {
-        console.error("Erreur lors de la mise à jour du favori :", error);
-        res.status(500).send("Erreur serveur");
-    }
-});
-
-
-
-app.get("/game", async (req, res) => {
-    const { id } = req.query;
-    try {
-        if (!id || isNaN(parseInt(id, 10))) {
-            return res.status(400).json({ error: "ID invalide ou manquant" });
-        }
-
-        const game = await prisma.games.findUnique({
-            where: { id: parseInt(id, 10) },
-            include: {
-                editor: true,
-                genre: true,
-            },
-        });
-
-        if (!game) {
-            return res.status(404).send("Jeu introuvable");
-        }
-        const editor = await prisma.Editors.findMany();
-        const genre = await prisma.Genres.findMany();
-        res.render("infogame", { game, editor, genre});
-    } catch (error) {
-        console.error("Erreur lors de la récupération du jeu :", error);
-        res.status(500).json({ error: "Erreur interne du serveur" });
-    }
-});
-
-app.post("/infogames", async (req, res, next) => {
-    const { id, jeux, description, date, editor, genre} = req.body;
-    try {
-        await prisma.Games.update({
-            where: { id: parseInt(id, 10) },
-            data : { title: jeux, description: description, releaseDate: date , genreId: parseInt(genre), editorId: parseInt(editor)},
-        });
-        res.redirect(req.headers.referer || '/');
-    } catch (error) {
-        console.error("Erreur lors de la modification de l'éditeur :", error);
-        res.status(400).json({ error: "Échec de la modification de l'éditeur" });
-    }
-});
-
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+// Gestion des erreurs 404
+app.use((req, res, next) => {
+    res.status(404).render("404");
 });

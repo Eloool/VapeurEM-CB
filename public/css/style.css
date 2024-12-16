@@ -1,188 +1,214 @@
-/* CSS général */
+/* Global Styles */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    background-color: #f2f2f2;
-    color: #333;
+    background-color: #121212;
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 header {
-    background-color: #333;
-    color: white;
-    padding: 15px;
+    background-color: #212121;
+    padding: 10px 20px;
     display: flex;
-    justify-content: space-around;
+    gap: 10px;
     align-items: center;
-    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
 }
 
 header button {
-    background-color: #444;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    margin: 5px;
+    background-color: #333;
+    color: #e0e0e0;
+    border: 1px solid #444;
+    padding: 10px 15px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    font-size: 16px;
     border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+    display: inline-block;
 }
 
 header button:hover {
-    background-color: #555;
+    background-color: #444;
+    color: #fff;
 }
 
+/* Form Styling */
 form {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin: 20px;
+    margin-bottom: 20px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    width: 300px;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box; /* Box-sizing pour éviter les marges supplémentaires */
 }
 
 form label {
-    margin-bottom: 10px;
     font-weight: bold;
-}
-
-form input[type="text"],
-form input[type="date"],
-form select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-form button {
-    background-color: #666; /* Gris foncé */
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-form button:hover {
-    background-color: #555; /* Gris plus foncé sur hover */
-}
-
-h1 {
-    text-align: center;
-    margin: 20px 0;
-    color: #333;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-ul li {
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-bottom: 5px;
 }
 
-ul li a {
-    text-decoration: none;
-    color: #007bff; /* Bleu pour les liens */
+form input[type="text"], form input[type="date"] {
+    padding: 8px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    background-color: #212121;
+    color: #e0e0e0;
+    width: 100%;
+    max-width: 300px;
 }
 
-ul li a:hover {
-    text-decoration: underline;
-}
-
-form[type="checkbox"] input {
-    width: 16px;
-    height: 16px;
-    margin: 0;
+form select {
+    padding: 8px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    background-color: #212121;
+    color: #e0e0e0;
+    width: 100%;
+    max-width: 300px;
 }
 
 form button {
-    background-color: #dc3545; /* Rouge pour suppression */
+    background-color: #333;
     color: white;
     border: none;
-    padding: 5px 10px;
-    border-radius: 3px;
+    padding: 8px 12px;
+    font-size: 14px;
     cursor: pointer;
+    border-radius: 5px;
     transition: background-color 0.3s;
-    font-size: 12px; /* Petit texte */
+    display: inline-block;
 }
 
 form button:hover {
-    background-color: #c82333; /* Rouge foncé sur hover */
+    background-color: #444;
 }
 
-/* Styles pour les tables */
+/* List Styling */
+#liste ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+#liste li {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #212121;
+    border: 1px solid #444;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+#liste li form {
+    margin: 0;
+    display: inline;
+}
+
+#liste li button {
+    font-size: 12px;
+    padding: 5px 10px;
+    margin-left: 5px;
+    background-color: #333;
+    color: #e0e0e0;
+    border: none;
+    border-radius: 5px;
+}
+
+#liste li button:hover {
+    background-color: #444;
+}
+
+/* Table Styling */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    background-color: #212121;
 }
 
-table th,
-table td {
-    border: 1px solid #ddd;
+table th, table td {
     padding: 10px;
     text-align: left;
-    background-color: white;
-}
-table td form{
-    margin :0;
-    width: 10%;
+    border: 1px solid #444;
+    color: #e0e0e0;
 }
 
 table th {
-    background-color: #444;
-    color: white;
-    font-weight: bold;
+    background-color: #333;
+    color: #fff;
 }
 
-table th:hover {
-    background-color: #555;
+table tbody tr:nth-child(even) {
+    background-color: #1a1a1a;
 }
 
-table td a {
-    text-decoration: none;
-    color: #007bff;
-}
-
-table td a:hover {
-    text-decoration: underline;
-}
-
-table td form {
-    margin: 0;
-    height: 50%;
-    width: 50%;
-}
-
-table td button {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 3px 8px; /* Bouton plus petit */
-    border-radius: 3px;
+/* Checkbox and Delete Button */
+input[type="checkbox"] {
+    transform: scale(1.2);
     cursor: pointer;
-    transition: background-color 0.3s;
-    font-size: 12px; /* Petit texte */
+    background-color: #212121;
+    border: 1px solid #444;
+    color: #e0e0e0;
 }
 
-table td button:hover {
-    background-color: #c82333;
+button[type="submit"] {
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #333;
+    color: #e0e0e0;
+    border: none;
+}
+
+button[type="submit"]:hover {
+    background-color: #444;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    table th, table td {
+        font-size: 12px;
+        padding: 5px;
+    }
+
+    form input[type="text"], form button {
+        font-size: 12px;
+        padding: 5px;
+    }
+
+    #liste li {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #liste li button {
+        margin-top: 5px;
+    }
+}
+
+#game {
+    background-color: #212121;
+    padding: 20px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5); /* Ombre pour délimiter le bloc */
+    margin-bottom: 20px;
 }
