@@ -18,6 +18,7 @@ model Games {
   title        String
   description  String
   releaseDate  String
+  favorited    Boolean  @default(false)
   editor       Editors? @relation(fields: [editorId], references: [id])
   editorId     Int?
   genre        Genres?   @relation(fields: [genreId], references: [id])

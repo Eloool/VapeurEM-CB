@@ -1,10 +1,23 @@
+<div id="game">
 <h1>{{game.title}}</h1>
-<p>{{game.description}}</p>
-<p>Date de sortie : {{game.releaseDate}}</p><br>
-<a href="/editor?id={{game.editor.id}}">{{game.editor.name}}</a>
-<a href="/genres?id={{game.genre.id}}">{{game.genre.name}}</a>
 
-<form method="post" action="infogames">
+<p>Date de sortie : {{game.releaseDate}}</p><br>
+<div id="editor">
+<p>Editeur:</p>
+<a href="/editor?id={{game.editor.id}}">{{game.editor.name}}</a>
+</div>
+<div id="genre">
+<p>Genre:</p>
+<a href="/genres?id={{game.genre.id}}">{{game.genre.name}}</a>
+</div>
+<p>Description:</p>
+<p>{{game.description}}</p>
+</div>
+
+
+
+<form method="post" action="/games/update">
+    <div id="tiltedesc">
     <input type="hidden" name = "id" value="{{game.id}}">
     <label for="jeux">Modifier nom du jeux:</label>
     <input type="text" id="jeux" name="jeux" value="{{game.title}}" required/><br>
@@ -12,6 +25,8 @@
     <input type="text" id="description" name="description" value = "{{game.description}}" required/><br>
     <label for="date">Modifier la date:</label>
     <input type="date" id="date" name="date"  value="{{game.releaseDate}}" required/><br>
+    </div>
+    <div id="editorgenre">
     <select name="editor" id="editor">
     <option value="{{game.editor.id}}">{{game.editor.name}}</option>
     {{#each editor}}
@@ -31,6 +46,7 @@
     {{/each}}
     </select>
     <button type="submit">Modifier le jeux</button>
+    </div>
 </form>
 
 

@@ -4,18 +4,16 @@
      <button type="submit">Ajouter un editeur</button>
 </form>
 <h1>Liste des éditeurs</h1>
-
+<div id="liste">
 <ul>
     {{#each editor}}
         <li>
             <a href="/editor?id={{id}}">{{name}}</a>
-            
             <form method="post" action="/editor/update" style="display: inline;">
                 <input type="hidden" name="id" value="{{id}}" />
                 <input type="text" name="name" value="{{name}}" required />
                 <button type="submit">Modifier</button>
             </form>
-
             <form method="post" action="/editor/delete">
                 <input type="hidden" name="id" value="{{id}}" />
                 <button type="submit">Supprimer</button>
@@ -23,4 +21,5 @@
         </li>
     {{/each}}
 </ul>
+</div>
 {{>tableauenumgames games=games}}

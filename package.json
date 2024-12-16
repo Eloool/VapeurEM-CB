@@ -4,10 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "serveur": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serveur": "nodemon index.js"
   },
-  "author": "",
+  "author": "Eloool",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^6.0.0",
