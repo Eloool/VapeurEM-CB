@@ -223,6 +223,10 @@ app.post("/editor", async (req, res, next) => {
 app.post("/editor/delete", async (req, res, next) => {
     const { id } = req.body;
     try {
+        await prisma.Games.deleteMany({
+            where: { editorId : parseInt(id,10) },
+        })
+
         await prisma.Editors.delete({
             where: { id: parseInt(id, 10) },
         });
