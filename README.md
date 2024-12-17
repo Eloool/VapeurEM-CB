@@ -40,4 +40,4 @@ http://localhost:3008
 
 ---
 
-Créé par Christophe Bolon et Elyo Maamari  
+Créé par [Christophe Bolon](https://github.com/Eloool) et [Elyo Maamari](https://github.com/Elyo17)  
