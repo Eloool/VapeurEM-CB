@@ -1,5 +1,7 @@
 <h1>Ajouter un jeu:</h1>
 {{>add_jeux editor=editor genre=genre}}
 
+{{#if games}}
 <h1>Liste des jeux</h1>
 {{>tableauenumgames games=games}}
+{{/if}}

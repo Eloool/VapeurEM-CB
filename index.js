@@ -226,6 +226,7 @@ app.post("/editor/delete", async (req, res, next) => {
         await prisma.Editors.delete({
             where: { id: parseInt(id, 10) },
         });
+
         res.redirect("/editor"); 
     } catch (error) {
         console.error("Erreur lors de la suppression de l'éditeur :", error);
