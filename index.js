@@ -90,14 +90,17 @@ app.get("/games", async (req, res) => {
 //Ajout d'un jeu
 app.post("/addgame", async (req, res, next) => {
     const  { jeux, description, date, editor, genre} = req.body;
+    if(!editor || !genre || isNaN(parseInt(editor)) || isNaN(parseInt(genre))){
+        return res.redirect("/games");
+    }
     try {
         await prisma.Games.create({
             data : { title: jeux, description: description, releaseDate: date , genreId: parseInt(genre), editorId: parseInt(editor)}, 
-        }); // Ici on ne stock pas le retour de la requête, mais on attend quand même son exécution
-        res.status(201).redirect("/games"); // On redirige vers la page des tâches
+        }); 
+        res.status(201).redirect("/games"); 
     } catch (error) {
         console.error(error);
-        res.status(400).json({ error: "Task creation failed" });
+        res.status(400).json({ error: "Game creation failed" });
     }
 });
 
