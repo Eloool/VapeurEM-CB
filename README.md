@@ -1,12 +1,43 @@
 # VapeurEM-CB
-### 1. Pouvoir clone le projet:
-#### - Cliquez dans code et download le zip
-#### - Utiliser git: git clone https://github.com/Eloool/VapeurEM-CB.git ou le lien ssh en utilisant votre clé privé
-### 2. Installation de express.js et prisma:
-#### - En tout premier nous fesons npm init -y pour initialiser le projet
-#### - En 2ème nous installons express avec la commande npm install express
-#### - Pour faciliter la chose nous installons nodemon pour pas que le serveur ce ferme à chaque fois avec la commande npm install nodemon -g
-#### - Par la suite nous installons prisma avec cette commande npm install prisma @prisma/client sqlite3
-#### - Ensuite nous initialisons le prisma avec la commande npx prisma init
-#### - Enfin nous installons les Hbs avec cette commande npm install hbs
 
+Vapeur est un site web permettant de répertorier les jeux vidéo et leurs éditeurs. Ce site a été développé avec Express.js et Prisma pour le backend, et HandleBars pour les templates.
+
+## 1. Cloner le projet  
+Dans Git Bash, dans un dossier vide, entrez la commande suivante :  
+```bash
+git clone https://github.com/Eloool/VapeurEM-CB.git 
+```
+
+## 2. Installer les dépendances  
+Ouvrez le projet dans Visual Studio Code.  
+Dans le terminal (CMD) de Visual Studio Code, entrez :  
+```bash
+npm install
+```
+
+## 3. Configurer Prisma  
+1. Créez un fichier `.env` à la racine du projet.  
+2. Ajoutez-y le contenu suivant :  
+   ```env
+   DATABASE_URL="file:./database.db"
+   ```  
+3. Dans le terminal, exécutez la commande suivante :  
+   ```bash
+   npx prisma migrate dev --name serveur
+   ```
+
+## 4. Lancer le serveur  
+Dans le terminal, entrez :  
+```bash
+npm run serveur
+```
+
+## 5. Accéder au site  
+Ouvrez votre navigateur et entrez l'URL suivante :  
+```
+http://localhost:3008
+```
+
+---
+
+Créé par Christophe Bolon et Elyo Maamari  
