@@ -15,7 +15,7 @@
     {{#each games}}
     <tr>
       <th scope="row">
-        <form method="post" action="/favorited">
+        <form method="post" action="favorited">
           <input type="hidden" name="id" value="{{id}}" />
           <input type="hidden" name="favorited" value="false" />
           <input 
@@ -31,8 +31,8 @@
       <td><a href="/game?id={{id}}">{{title}}</a></td>
       <td>{{description}}</td>
       <td>{{releaseDate}}</td>
-      <td><a href="/editor?id={{editor.id}}">{{editor.name}}</a></td>
-      <td><a href="/genres?id={{genre.id}}">{{genre.name}}</a></td>
+      <td><a href="/games/editor?id={{editor.id}}">{{editor.name}}</a></td>
+      <td><a href="/games/genres?id={{genre.id}}">{{genre.name}}</a></td>
       <td>
         <form method="post" action="/games/delete">
             <input type="hidden" name="id" value="{{id}}" />
