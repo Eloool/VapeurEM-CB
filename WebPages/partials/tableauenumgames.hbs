@@ -15,7 +15,7 @@
     {{#each games}}
     <tr>
       <th scope="row">
-        <form method="post" action="favorited">
+        <form method="post" action="/games/favorited">
           <input type="hidden" name="id" value="{{id}}" />
           <input type="hidden" name="favorited" value="false" />
           <input 

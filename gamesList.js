@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { PrismaClient } = require("@prisma/client");
 
-const prisma = new PrismaClient();
-
+const gameService = require("./data/gamePrismaAccess");
+const editorService = require("./data/editorPrismaAccess");
+const genreService = require("./data/genrePrsimaAccess");
 //Affichage de tous les jeux
 router.get("/", async (req, res) => {
-    const games = await prisma.games.findMany({
+    const games = await gameService.getListGames({
         include: {
             editor: true,
             genre: true,
@@ -15,8 +15,9 @@ router.get("/", async (req, res) => {
                 title: "asc",
             },
         });
-    const editor = await prisma.Editors.findMany();
-    const genre = await prisma.Genres.findMany();
+    console.log(games);
+    const editor = await editorService.getEditors();
+    const genre = await genreService.getGenres();
     res.render("games", {
         games,editor,genre
     });
@@ -29,7 +30,7 @@ router.post("/addgame", async (req, res, next) => {
         return res.redirect("/games");
     }
     try {
-        await prisma.Games.create({
+        await gameService.createGame({
             data : { title: jeux, description: description, releaseDate: date , genreId: parseInt(genre), editorId: parseInt(editor)}, 
         }); 
         res.status(201).redirect("/games"); 
@@ -43,9 +44,7 @@ router.post("/addgame", async (req, res, next) => {
 router.post("/delete", async (req, res, next) => {
     const { id } = req.body;
     try {
-        await prisma.Games.delete({
-            where: { id: parseInt(id, 10) },
-        });
+        await gameService.deleteGame(id);
         res.redirect("/games"); 
     } catch (error) {
         console.error("Erreur lors de la suppression du jeu :", error);
@@ -57,9 +56,12 @@ router.post("/delete", async (req, res, next) => {
 router.post("/update", async (req, res, next) => {
     const { id, jeux, description, date, editor, genre} = req.body;
     try {
-        await prisma.Games.update({
-            where: { id: parseInt(id, 10) },
-            data : { title: jeux, description: description, releaseDate: date , genreId: parseInt(genre), editorId: parseInt(editor)},
+        await gameService.updateGame(id, {
+            title: jeux,
+            description: description,
+            releaseDate: date,
+            genreId: parseInt(genre),
+            editorId: parseInt(editor)
         });
         res.redirect(req.headers.referer || '/');
     } catch (error) {
@@ -73,9 +75,8 @@ router.post("/favorited", async (req, res, next) => {
     const { id, favorited } = req.body;
     try {
         const favoritedbool = favorited[1] === 'true';
-        await prisma.Games.update({
-            where: { id: parseInt(id, 10) },
-            data: { favorited: favoritedbool },
+        await gameService.updateGame(id, {
+            favorited: favoritedbool
         });
         res.redirect(req.headers.referer || '/');
     } catch (error) {
@@ -88,7 +89,7 @@ router.post("/favorited", async (req, res, next) => {
 router.get("/editor", async (req, res) => {
     const { id } = req.query;
     try {
-        const editor = await prisma.Editors.findMany({
+        const editor = await editorService.getEditors({
             orderBy: {
                 name: "asc",
             },
@@ -96,7 +97,7 @@ router.get("/editor", async (req, res) => {
 
         let games = null;
         if (id) {
-            games = await prisma.Games.findMany({
+            games = await gameService.getListGames({
                 where: { editorId: parseInt(id, 10) },
                 include: {
                     editor: true,
@@ -119,7 +120,7 @@ router.get("/editor", async (req, res) => {
 router.post("/editor", async (req, res, next) => {
     const  { editor } = req.body;
     try {
-        await prisma.Editors.create({
+        await editorService.createEditor({
             data : { name:editor }, 
         }); 
         res.status(201).redirect("/editor");
@@ -133,13 +134,9 @@ router.post("/editor", async (req, res, next) => {
 router.post("/editor/delete", async (req, res, next) => {
     const { id } = req.body;
     try {
-        await prisma.Games.deleteMany({
-            where: { editorId : parseInt(id,10) },
-        })
+        await gameService.deleteGames({ editorId: parseInt(id, 10) });
 
-        await prisma.Editors.delete({
-            where: { id: parseInt(id, 10) },
-        });
+        await editorService.deleteEditor(id);
 
         res.redirect("/editor"); 
     } catch (error) {
@@ -152,10 +149,7 @@ router.post("/editor/delete", async (req, res, next) => {
 router.post("/editor/update", async (req, res, next) => {
     const { id, name } = req.body;
     try {
-        await prisma.Editors.update({
-            where: { id: parseInt(id, 10) },
-            data: { name },
-        });
+        await editorService.updateEditor(id, { name });
         res.redirect("/editor");
     } catch (error) {
         console.error("Erreur lors de la modification de l'éditeur :", error);
@@ -167,7 +161,7 @@ router.post("/editor/update", async (req, res, next) => {
 router  .get("/genres", async (req, res) => {
     const { id } = req.query;
     try {
-        const genres = await prisma.Genres.findMany({
+        const genres = await genreService.getGenres({
             orderBy: {
                 name: "asc",
             },
@@ -175,7 +169,7 @@ router  .get("/genres", async (req, res) => {
 
         let gamesWithGenre = null;
         if (id) {
-            gamesWithGenre = await prisma.Games.findMany({
+            gamesWithGenre = await gameService.getListGames({
                 where: { genreId: parseInt(id, 10) },
                 include: {
                     editor: true,
