@@ -1,6 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
+
 class genrePrismaAccess {
     async getGenres() {
         return await prisma.Genres.findMany();

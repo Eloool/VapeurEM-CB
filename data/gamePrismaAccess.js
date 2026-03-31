@@ -16,6 +16,9 @@ class gamePrismaAccess {
             }
         });
     }
+    async getGame(options = {}) {
+        return await prisma.games.findUnique(options);
+    }
 
     async createGame(data) {
         return await prisma.games.create( data );

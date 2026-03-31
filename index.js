@@ -1,13 +1,11 @@
 //Ajout des modules dont on a besoins
 const express = require("express");
-const { PrismaClient } = require("@prisma/client");
 const bodyParser = require("body-parser");
 const hbs = require("hbs");
 const path = require("path");
 const { title } = require("process");
 
 const app = express();
-const prisma = new PrismaClient();
 const PORT = 3008;
 app.set("view engine", "hbs"); // On définit le moteur de template que Express va utiliser
 app.set("views", path.join(__dirname, "WebPages")); // On définit le dossier des vues (dans lequel se trouvent les fichiers .hbs)
@@ -22,18 +20,30 @@ hbs.registerHelper("ifEqual", function (a, b, options) {
     return a == b ? options.fn(this) : options.inverse(this);
 });
 
+const genreService = require("./data/genrePrsimaAccess");
+const editorService = require("./data/editorPrismaAccess");
+const gameService = require("./data/gamePrismaAccess");
+
+const IndexView = require("./view/IndexView");
+const NotFoundView = require("./view/NotFoundView");
+
+const indexView = new IndexView();
+const notFoundView = new NotFoundView();
+
+const gamesChecking = require("./service/gamesChecking");
+
 // Ajout des genres qu'y n'existent pas dans la base de données 
 const gamesGenres = ["Action","Aventure","RPG","Simulation","Sport","MMORPG"];
 (async () => {
     try {
         // Récupérer tous les genres existants dans la base de données
-        const genres = await prisma.genres.findMany();
+        const genres = await genreService.getGenres();
         const existingGenreNames = genres.map((genre) => genre.name);
 
         // Parcourir les genres définis et ajouter les nouveaux
         for (const element of gamesGenres) {
             if (!existingGenreNames.includes(element)) {
-                await prisma.genres.create({
+                await genreService.createGenre({
                     data: {
                         name: element, 
                     },
@@ -50,19 +60,8 @@ const gamesGenres = ["Action","Aventure","RPG","Simulation","Sport","MMORPG"];
 //Affichage des jeux en favori
 app.get("/", async (req, res) => {
     try {
-        const games = await prisma.games.findMany({
-            include: {
-                editor: true,
-                genre: true,
-            },
-            where: {
-                favorited: true,
-            },
-            orderBy: {
-                title: "asc",
-            },
-        });
-        res.render("index", { games });
+        const games = await gamesChecking.getInfosFirstPage();
+        indexView.displayFavorites(res, games);
     } catch (error) {
         console.error("Erreur lors de la récupération des jeux favoris :", error);
         res.status(500).send("Erreur serveur");
@@ -81,5 +80,5 @@ app.listen(PORT, () => {
 
 // Gestion des erreurs 404
 app.use((req, res, next) => {
-    res.status(404).render("404");
+    notFoundView.display(res);
 });

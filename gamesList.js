@@ -4,23 +4,20 @@ const router = express.Router();
 const gameService = require("./data/gamePrismaAccess");
 const editorService = require("./data/editorPrismaAccess");
 const genreService = require("./data/genrePrsimaAccess");
+
+const GamesView = require("./view/GamesView");
+const EditorView = require("./view/EditorView");
+const GenresView = require("./view/GenresView");
+
+const gamesView = new GamesView();
+const editorView = new EditorView();
+const genresView = new GenresView();
+const gamesChecking = require("./service/gamesChecking");
+
 //Affichage de tous les jeux
 router.get("/", async (req, res) => {
-    const games = await gameService.getListGames({
-        include: {
-            editor: true,
-            genre: true,
-        },
-            orderBy: {
-                title: "asc",
-            },
-        });
-    console.log(games);
-    const editor = await editorService.getEditors();
-    const genre = await genreService.getGenres();
-    res.render("games", {
-        games,editor,genre
-    });
+    const {games,editor, genre} = await gamesChecking.getAllGamesList();
+    gamesView.displayGamesList(res, games, editor, genre);
 });
 
 //Ajout d'un jeu
@@ -32,8 +29,9 @@ router.post("/addgame", async (req, res, next) => {
     try {
         await gameService.createGame({
             data : { title: jeux, description: description, releaseDate: date , genreId: parseInt(genre), editorId: parseInt(editor)}, 
-        }); 
-        res.status(201).redirect("/games"); 
+        });
+        const {games,editor, genre} = await gamesChecking.getAllGamesList();
+        gamesView.gameAdded(res, games, editor, genre);
     } catch (error) {
         console.error(error);
         res.status(400).json({ error: "Game creation failed" });
@@ -89,27 +87,8 @@ router.post("/favorited", async (req, res, next) => {
 router.get("/editor", async (req, res) => {
     const { id } = req.query;
     try {
-        const editor = await editorService.getEditors({
-            orderBy: {
-                name: "asc",
-            },
-        });
-
-        let games = null;
-        if (id) {
-            games = await gameService.getListGames({
-                where: { editorId: parseInt(id, 10) },
-                include: {
-                    editor: true,
-                    genre: true,
-                },
-                orderBy: {
-                    title: "asc",
-                },
-            });
-        }
-
-        res.render("editor", { editor, games });
+        const { editor, games } = await gamesChecking.getGamesEditorList(id);
+        editorView.displayEditors(res, editor, games);
     } catch (error) {
         console.error("Erreur lors de la récupération des éditeurs :", error);
         res.status(500).json({ error: "Erreur serveur" });
@@ -122,8 +101,9 @@ router.post("/editor", async (req, res, next) => {
     try {
         await editorService.createEditor({
             data : { name:editor }, 
-        }); 
-        res.status(201).redirect("/editor");
+        });
+        const editors = await editorService.getEditors();
+        editorView.editorAdded(res, editors);
     } catch (error) {
         console.error(error);
         res.status(400).json({ error: "Task creation failed" });
@@ -158,29 +138,11 @@ router.post("/editor/update", async (req, res, next) => {
 });
 
 //Affichage de tous les genres et des jeux du genre sélectionné
-router  .get("/genres", async (req, res) => {
+router.get("/genres", async (req, res) => {
     const { id } = req.query;
     try {
-        const genres = await genreService.getGenres({
-            orderBy: {
-                name: "asc",
-            },
-        });
-
-        let gamesWithGenre = null;
-        if (id) {
-            gamesWithGenre = await gameService.getListGames({
-                where: { genreId: parseInt(id, 10) },
-                include: {
-                    editor: true,
-                    genre: true,
-                },
-                orderBy: {
-                    title: "asc",
-                },
-            });
-        }
-        res.render("genres", { genres, gamesWithGenre });
+        const { genres, gamesWithGenre } = await gamesChecking.getGamesGenreList(id);
+        genresView.displayGenres(res, genres, gamesWithGenre);
     } catch (error) {
         console.error("Erreur lors de la récupération des éditeurs :", error);
         res.status(500).json({ error: "Erreur serveur" });
