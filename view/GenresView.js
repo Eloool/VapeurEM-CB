@@ -11,8 +11,8 @@ class GenresView extends View {
      * @param {Array} genres - Liste des genres
      * @param {Array|null} gamesWithGenre - Jeux du genre sélectionné (optional)
      */
-    displayGenres(res, genres, gamesWithGenre = null) {
-        this.render(res, { genres, gamesWithGenre });
+    displayGenres(res, genres, gamesWithGenre = null, options = {}) {
+        this.render(res, { genres, gamesWithGenre, ...options });
     }
 }
 

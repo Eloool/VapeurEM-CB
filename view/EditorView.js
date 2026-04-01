@@ -8,20 +8,20 @@ class EditorView extends View {
     /**
      * Affiche la liste des éditeurs et optionnellement les jeux d'un éditeur
      * @param {Object} res - Réponse Express
-     * @param {Array} editors - Liste des éditeurs
+     * @param {Array} editor - Liste des éditeurs
      * @param {Array|null} games - Jeux de l'éditeur sélectionné (optional)
      */
-    displayEditors(res, editors, games = null) {
-        this.render(res, { editors, games });
+    displayEditors(res, editor, games = null, options = {}) {
+        this.render(res, { editor, games, ...options });
     }
 
     /**
      * Affiche la liste avec confirmation d'ajout
      * @param {Object} res - Réponse Express
-     * @param {Array} editors - Liste des éditeurs
+     * @param {Array} editor - Liste des éditeurs
      */
-    editorAdded(res, editors) {
-        this.renderWithStatus(res, { editors }, 201);
+    editorAdded(res, editor) {
+        this.renderWithStatus(res, { editor }, 201);
     }
 }
 

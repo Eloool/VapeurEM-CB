@@ -3,7 +3,16 @@
   <thead>
     <tr>
       <th scope="col">Favori</th>
-      <th scope="col">Nom du jeu</th>
+      <th scope="col">
+        Nom du jeu
+        {{#if routeBase}}
+          <a href="{{routeBase}}?{{#if selectedId}}id={{selectedId}}&{{/if}}sortField=title&sortOrder=asc" title="Tri ascendant">▲</a>
+          <a href="{{routeBase}}?{{#if selectedId}}id={{selectedId}}&{{/if}}sortField=title&sortOrder=desc" title="Tri descendant">▼</a>
+        {{else}}
+          <a href="/games?sortField=title&sortOrder=asc" title="Tri ascendant">▲</a>
+          <a href="/games?sortField=title&sortOrder=desc" title="Tri descendant">▼</a>
+        {{/if}}
+      </th>
       <th scope="col">Description</th>
       <th scope="col">Date de sortie</th>
       <th scope="col">Editor</th>

@@ -4,11 +4,11 @@ const prisma = new PrismaClient();
 
 class gamePrismaAccess {
     async getListGames(options = {}) {
-        return await prisma.games.findMany(options);
+        return await prisma.Games.findMany(options);
     }
 
     async getGameById(id) {
-        return await prisma.games.findUnique({
+        return await prisma.Games.findUnique({
             where: { id: parseInt(id, 10) },
             include: {
                 editor: true,
@@ -17,26 +17,27 @@ class gamePrismaAccess {
         });
     }
     async getGame(options = {}) {
-        return await prisma.games.findUnique(options);
+        return await prisma.Games.findUnique(options);
     }
 
-    async createGame(data) {
-        return await prisma.games.create( data );
+    async createGame(options) {
+        return await prisma.Games.create(options);
     }
 
     async updateGame(id, data) {
-        return await prisma.games.update({
+        return await prisma.Games.update({
             where: { id: parseInt(id, 10) },
             data
         });
     }
 
     async deleteGame(id) {
-        return await prisma.games.delete({
+        return await prisma.Games.delete({
             where: { id: parseInt(id, 10) }
         });
-    }async deleteGames(options = {}) {
-        return await prisma.games.deleteMany(options);
+    }
+    async deleteGames(options = {}) {
+        return await prisma.Games.deleteMany(options);
     }
     
 }

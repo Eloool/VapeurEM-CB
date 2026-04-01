@@ -73,12 +73,14 @@ const gameRoutes = require("./game");
 app.use("/games", gamesRoutes);
 app.use("/game", gameRoutes);
 
+// Gestion des erreurs 404
+app.use((req, res, next) => {
+    notFoundView.display(res);
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-// Gestion des erreurs 404
-app.use((req, res, next) => {
-    notFoundView.display(res);
-});
+module.exports = app;
+

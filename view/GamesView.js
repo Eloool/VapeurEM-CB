@@ -12,19 +12,19 @@ class GamesView extends View {
      * @param {Array} editors - Liste des éditeurs
      * @param {Array} genres - Liste des genres
      */
-    displayGamesList(res, games, editors, genres) {
-        this.render(res, { games, editors, genres });
+    displayGamesList(res, games, editor, genre) {
+        this.render(res, { games, editor, genre });
     }
 
     /**
      * Affiche un message de succès après ajout
      * @param {Object} res - Réponse Express
      * @param {Array} games - Liste des jeux
-     * @param {Array} editors - Liste des éditeurs
-     * @param {Array} genres - Liste des genres
+     * @param {Array} editor - Liste des éditeurs
+     * @param {Array} genre - Liste des genres
      */
-    gameAdded(res, games, editors, genres) {
-        this.renderWithStatus(res, { games, editors, genres }, 201);
+    gameAdded(res, games, editor, genre) {
+        this.renderWithStatus(res, { games, editor, genre }, 201);
     }
 }
 

@@ -18,62 +18,75 @@ class gamesChecking {
                 });
         return games;
     }
-    async getAllGamesList() {
+    _buildOrderBy(sortField = "title", sortOrder = "asc") {
+        const order = sortOrder === "desc" ? "desc" : "asc";
+        switch (sortField) {
+            case "releaseDate":
+                return { releaseDate: order };
+            case "description":
+                return { description: order };
+            case "editor":
+                return { editor: { name: order } };
+            case "genre":
+                return { genre: { name: order } };
+            default:
+                return { title: order };
+        }
+    }
+
+    async getAllGamesList(sortField = "title", sortOrder = "asc") {
+        const orderBy = this._buildOrderBy(sortField, sortOrder);
         const games = await gameService.getListGames({
+            include: {
+                editor: true,
+                genre: true,
+            },
+            orderBy,
+        });
+        const editor = await editorService.getEditors();
+        const genre = await genreService.getGenres();
+        return { games, editor, genre };
+    }
+    async getGamesEditorList(id, sortField = "title", sortOrder = "asc") {
+        const editor = await editorService.getEditors({
+            orderBy: {
+                name: "asc",
+            },
+        });
+
+        let games = null;
+        if (id) {
+            const orderBy = this._buildOrderBy(sortField, sortOrder);
+            games = await gameService.getListGames({
+                where: { editorId: parseInt(id, 10) },
                 include: {
                     editor: true,
                     genre: true,
                 },
-                    orderBy: {
-                        title: "asc",
-                    },
-                });
-            const editor = await editorService.getEditors();
-            const genre = await genreService.getGenres();
-        return { games, editor, genre };
-    }
-    async getGamesEditorList(id) {
-        const editor = await editorService.getEditors({
-                    orderBy: {
-                        name: "asc",
-                    },
-                });
-        
-                let games = null;
-                if (id) {
-                    games = await gameService.getListGames({
-                        where: { editorId: parseInt(id, 10) },
-                        include: {
-                            editor: true,
-                            genre: true,
-                        },
-                        orderBy: {
-                            title: "asc",
-                        },
-                    });
-                }
+                orderBy,
+            });
+        }
         return { editor, games };
     }
-    async getGamesGenreList(id) {
+    async getGamesGenreList(id, sortField = "title", sortOrder = "asc") {
         const genres = await genreService.getGenres({
                     orderBy: {
                         name: "asc",
                     },
                 });
         
-                let gamesWithGenre = null;
-                if (id) {
-                    gamesWithGenre = await gameService.getListGames({
-                        where: { genreId: parseInt(id, 10) },
-                        include: {
-                            editor: true,
-                            genre: true,
-                        },
-                        orderBy: {
-                            title: "asc",
-                        },
-                    });
-                }
+        let gamesWithGenre = null;
+        if (id) {
+            const orderBy = this._buildOrderBy(sortField, sortOrder);
+            gamesWithGenre = await gameService.getListGames({
+                where: { genreId: parseInt(id, 10) },
+                include: {
+                    editor: true,
+                    genre: true,
+                },
+                orderBy,
+            });
+        }
         return { genres, gamesWithGenre };
     }
     async getGameInfo(id) {

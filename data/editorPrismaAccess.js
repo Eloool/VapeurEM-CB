@@ -7,8 +7,8 @@ class editorPrismaAccess {
         return await prisma.Editors.findMany(options);
     }
 
-    async createEditor(data) {
-        return await prisma.Editors.create(data);
+    async createEditor(options) {
+        return await prisma.Editors.create(options);
     }
    
     async deleteEditor(id) {

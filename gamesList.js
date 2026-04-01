@@ -16,7 +16,8 @@ const gamesChecking = require("./service/gamesChecking");
 
 //Affichage de tous les jeux
 router.get("/", async (req, res) => {
-    const {games,editor, genre} = await gamesChecking.getAllGamesList();
+    const { sortField = "title", sortOrder = "asc" } = req.query;
+    const { games, editor, genre } = await gamesChecking.getAllGamesList(sortField, sortOrder);
     gamesView.displayGamesList(res, games, editor, genre);
 });
 
@@ -30,8 +31,8 @@ router.post("/addgame", async (req, res, next) => {
         await gameService.createGame({
             data : { title: jeux, description: description, releaseDate: date , genreId: parseInt(genre), editorId: parseInt(editor)}, 
         });
-        const {games,editor, genre} = await gamesChecking.getAllGamesList();
-        gamesView.gameAdded(res, games, editor, genre);
+        const {games,editors, genres} = await gamesChecking.getAllGamesList();
+        gamesView.gameAdded(res, games, editors, genres);
     } catch (error) {
         console.error(error);
         res.status(400).json({ error: "Game creation failed" });
@@ -85,10 +86,15 @@ router.post("/favorited", async (req, res, next) => {
 
 //Affochage de tous les editors avec leurs jeux
 router.get("/editor", async (req, res) => {
-    const { id } = req.query;
+    const { id, sortField = "title", sortOrder = "asc" } = req.query;
     try {
-        const { editor, games } = await gamesChecking.getGamesEditorList(id);
-        editorView.displayEditors(res, editor, games);
+        const { editor, games } = await gamesChecking.getGamesEditorList(id, sortField, sortOrder);
+        editorView.displayEditors(res, editor, games, {
+            routeBase: '/games/editor',
+            selectedId: id,
+            sortField,
+            sortOrder,
+        });
     } catch (error) {
         console.error("Erreur lors de la récupération des éditeurs :", error);
         res.status(500).json({ error: "Erreur serveur" });
@@ -115,7 +121,6 @@ router.post("/editor/delete", async (req, res, next) => {
     const { id } = req.body;
     try {
         await gameService.deleteGames({ editorId: parseInt(id, 10) });
-
         await editorService.deleteEditor(id);
 
         res.redirect("/editor"); 
@@ -139,10 +144,15 @@ router.post("/editor/update", async (req, res, next) => {
 
 //Affichage de tous les genres et des jeux du genre sélectionné
 router.get("/genres", async (req, res) => {
-    const { id } = req.query;
+    const { id, sortField = "title", sortOrder = "asc" } = req.query;
     try {
-        const { genres, gamesWithGenre } = await gamesChecking.getGamesGenreList(id);
-        genresView.displayGenres(res, genres, gamesWithGenre);
+        const { genres, gamesWithGenre } = await gamesChecking.getGamesGenreList(id, sortField, sortOrder);
+        genresView.displayGenres(res, genres, gamesWithGenre, {
+            routeBase: '/games/genres',
+            selectedId: id,
+            sortField,
+            sortOrder,
+        });
     } catch (error) {
         console.error("Erreur lors de la récupération des éditeurs :", error);
         res.status(500).json({ error: "Erreur serveur" });
