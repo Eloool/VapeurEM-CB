@@ -16,8 +16,8 @@ const gamesChecking = require("./service/gamesChecking");
 
 //Affichage de tous les jeux
 router.get("/", async (req, res) => {
-    const { sortField = "title", sortOrder = "asc" } = req.query;
-    const { games, editor, genre } = await gamesChecking.getAllGamesList(sortField, sortOrder);
+    const {  sortOrder = "asc" } = req.query;
+    const { games, editor, genre } = await gamesChecking.getAllGamesList( sortOrder);
     gamesView.displayGamesList(res, games, editor, genre);
 });
 
@@ -86,9 +86,9 @@ router.post("/favorited", async (req, res, next) => {
 
 //Affochage de tous les editors avec leurs jeux
 router.get("/editor", async (req, res) => {
-    const { id, sortField = "title", sortOrder = "asc" } = req.query;
+    const { id, sortOrder = "asc" } = req.query;
     try {
-        const { editor, games } = await gamesChecking.getGamesEditorList(id, sortField, sortOrder);
+        const { editor, games } = await gamesChecking.getGamesEditorList(id, sortOrder);
         editorView.displayEditors(res, editor, games, {
             routeBase: '/games/editor',
             selectedId: id,
@@ -144,9 +144,9 @@ router.post("/editor/update", async (req, res, next) => {
 
 //Affichage de tous les genres et des jeux du genre sélectionné
 router.get("/genres", async (req, res) => {
-    const { id, sortField = "title", sortOrder = "asc" } = req.query;
+    const { id, sortOrder = "asc" } = req.query;
     try {
-        const { genres, gamesWithGenre } = await gamesChecking.getGamesGenreList(id, sortField, sortOrder);
+        const { genres, gamesWithGenre } = await gamesChecking.getGamesGenreList(id, sortOrder);
         genresView.displayGenres(res, genres, gamesWithGenre, {
             routeBase: '/games/genres',
             selectedId: id,

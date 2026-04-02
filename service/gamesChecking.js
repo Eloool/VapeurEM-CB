@@ -18,24 +18,13 @@ class gamesChecking {
                 });
         return games;
     }
-    _buildOrderBy(sortField = "title", sortOrder = "asc") {
+    _buildOrderBy( sortOrder = "asc") {
         const order = sortOrder === "desc" ? "desc" : "asc";
-        switch (sortField) {
-            case "releaseDate":
-                return { releaseDate: order };
-            case "description":
-                return { description: order };
-            case "editor":
-                return { editor: { name: order } };
-            case "genre":
-                return { genre: { name: order } };
-            default:
-                return { title: order };
-        }
+        return { title: order };
     }
 
-    async getAllGamesList(sortField = "title", sortOrder = "asc") {
-        const orderBy = this._buildOrderBy(sortField, sortOrder);
+    async getAllGamesList( sortOrder = "asc") {
+        const orderBy = this._buildOrderBy( sortOrder);
         const games = await gameService.getListGames({
             include: {
                 editor: true,
@@ -47,7 +36,7 @@ class gamesChecking {
         const genre = await genreService.getGenres();
         return { games, editor, genre };
     }
-    async getGamesEditorList(id, sortField = "title", sortOrder = "asc") {
+    async getGamesEditorList(id, sortOrder = "asc") {
         const editor = await editorService.getEditors({
             orderBy: {
                 name: "asc",
@@ -56,7 +45,7 @@ class gamesChecking {
 
         let games = null;
         if (id) {
-            const orderBy = this._buildOrderBy(sortField, sortOrder);
+            const orderBy = this._buildOrderBy( sortOrder);
             games = await gameService.getListGames({
                 where: { editorId: parseInt(id, 10) },
                 include: {
@@ -68,7 +57,7 @@ class gamesChecking {
         }
         return { editor, games };
     }
-    async getGamesGenreList(id, sortField = "title", sortOrder = "asc") {
+    async getGamesGenreList(id, sortOrder = "asc") {
         const genres = await genreService.getGenres({
                     orderBy: {
                         name: "asc",
@@ -77,7 +66,7 @@ class gamesChecking {
         
         let gamesWithGenre = null;
         if (id) {
-            const orderBy = this._buildOrderBy(sortField, sortOrder);
+            const orderBy = this._buildOrderBy( sortOrder);
             gamesWithGenre = await gameService.getListGames({
                 where: { genreId: parseInt(id, 10) },
                 include: {
