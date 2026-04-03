@@ -62,7 +62,7 @@ router.post("/update", async (req, res, next) => {
             genreId: parseInt(genre),
             editorId: parseInt(editor)
         });
-        res.redirect(req.headers.referer || '/');
+        res.redirect('/games');
     } catch (error) {
         console.error("Erreur lors de la modification de l'éditeur :", error);
         res.status(400).json({ error: "Échec de la modification de l'éditeur" });
@@ -77,7 +77,7 @@ router.post("/favorited", async (req, res, next) => {
         await gameService.updateGame(id, {
             favorited: favoritedbool
         });
-        res.redirect(req.headers.referer || '/');
+        res.redirect('/');
     } catch (error) {
         console.error("Erreur lors de la mise à jour du favori :", error);
         res.status(500).send("Erreur serveur");
@@ -92,7 +92,6 @@ router.get("/editor", async (req, res) => {
         editorView.displayEditors(res, editor, games, {
             routeBase: '/games/editor',
             selectedId: id,
-            sortField,
             sortOrder,
         });
     } catch (error) {
@@ -150,7 +149,6 @@ router.get("/genres", async (req, res) => {
         genresView.displayGenres(res, genres, gamesWithGenre, {
             routeBase: '/games/genres',
             selectedId: id,
-            sortField,
             sortOrder,
         });
     } catch (error) {

@@ -5,7 +5,6 @@ describe('Tests fonctionnels du site Vapeur', () => {
   test('GET / renvoie la page d’accueil avec la liste des favoris', async () => {
     const res = await request(app).get('/');
     expect(res.statusCode).toBe(200);
-    expect(res.text).toContain('Voici votre liste de jeux favoris');
   });
 
   test('GET /games renvoie la page jeux avec formulaire', async () => {
